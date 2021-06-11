@@ -30,12 +30,22 @@ while run:
             os.system('cls')
 
     elif menu == '2':
+        print("커밍순!")
         input()
+        os.system('cls')
     elif menu == '3':
+        print("커밍순!")
         input()
+        os.system('cls')
     elif menu == '4':
+        print("커밍순!")
         input()
+        os.system('cls')
     elif menu == '5':
+        print("커밍순!")
+        input()
+        os.system('cls')
+    elif menu == '6':
         print("> 프로그램을 종료합니다(Press Enter Key)")
         input()
         run = False

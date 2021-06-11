@@ -7,7 +7,6 @@ class Crew:
         self.enter_count = 0
         self.exit_count = 0
 
-
     def do_enter(self):
         self.enter_count += 1
         return self.enter_count
