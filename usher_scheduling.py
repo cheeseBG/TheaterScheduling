@@ -54,6 +54,19 @@ for i in range(0, len(crew_name_list)):
     if crew_list[i].end_time >= 25:
         crew_list[i].end_time - 2400
 
+movie_time_list = df['입/퇴장시간'].values.tolist()
+movie_name_list = df['영화명'].values.tolist()
+temp_list = df['상영관'].values.tolist()
+movie_theater_num_list = []
+movie_work_class_list = []
+
+# 상영관 이름, 입퇴장 을 읽어와서 공백을 기준으로 구분
+for n in temp_list:
+    movie_theater_num_list.append(n.)
+    movie_work_class_list.append(n.)
+
+
+
 # Read '최종스케줄' and create DataFrame
 try:
     print("*** Read excel file '최종스케줄' ***")
@@ -61,8 +74,24 @@ try:
 except FileNotFoundError:
     try:
         df = pd.read_excel('최종스케줄.xlsx')
+
     except FileNotFoundError:
         print("Read file error")
     else:
         print("-> OK")
+
+# Create Assignment object
+for i in range(0, len(crew_name_list)):
+    crew_list.append(Crew(crew_name_list[i],  # name
+                     crew_time_list[i],  # start time
+                     crew_time_list[i] + 630,  # Work during 06:30
+                     i))  # index
+
+    # Calculate over the 60 minute
+    if crew_list[i].end_time % 100 >= 60:
+        crew_list[i].end_time += 40  # - 60minute, + 1hour
+
+    # Calculate over the 24 hour
+    if crew_list[i].end_time >= 25:
+        crew_list[i].end_time - 2400
 
