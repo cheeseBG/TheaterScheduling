@@ -2,6 +2,22 @@
 from crew_class import Crew
 import pandas as pd
 
+# Theater cleaning term
+theater_A = 5
+theater_B = 5
+theater_1 = 10
+theater_2 = 10
+theater_3 = 10
+theater_4 = 10
+theater_5 = 10
+theater_6 = 10
+theater_7 = 10
+theater_8 = 10
+theater_9 = 10
+theater_10 = 10
+theater_11 = 10
+
+# Configure excel version
 excelType = 0
 
 # Read '어셔출근시간' and create DataFrame
