@@ -50,3 +50,5 @@ except FileNotFoundError:
     else:
         print("-> OK")
 
+print(df)
+
