@@ -63,8 +63,13 @@ class Assignment:
             # 반불시간 리스트에서 반불시간 가져오기
             err_time = 0
             for i in range(0, len(err_time_list)):
+                flag = 0
                 if self.movie_name == err_time_list[i][0]:
                     err_time = err_time_list[i][1]
+                    flag = 1
+                # 반불시간이 없는 경우 알림
+                if i == len(err_time_list) - 1 and flag == 0:
+                    print(self.movie_name + '의 반불시간이 없습니다!')
 
             # 퇴장 마감시간
             self.end_time = time + cleaning_term_dict[self.theater_num] + err_time
