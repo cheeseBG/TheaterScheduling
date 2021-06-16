@@ -6,12 +6,13 @@
 
 
   ** 필요변수 **
-  threshold -> 같은 홀수 혹은 짝수관 입장을 받을때 threshold 아래인 경우 일 중복할당 가능 (최대 3개 관)
-  max_enter_num -> 최대 동시 입장받는 관 수
-  working_crew_list -> 일하고 있는 크루들을 담아두는 리스트 크루 object 저장
+  threshold -> 같은 홀수 혹은 짝수관 입장을 받을때 threshold 아래인 경우 일 중복할당 가능 (최대 3개 관)  ok
+  max_enter_num -> 최대 동시 입장받는 관 수  ok
+  working_crew_list -> 일하고 있는 크루들을 담아두는 리스트 크루 object 저장  ok
 
   ** 필요함수 **
-  refresh_working_crew_list -> 현재 할당을 기다리는 work 시간 기준으로 크루 출근, 크루 퇴근
+  calculate_avg_work_num -> 평균 
+  refresh_working_crew_list -> 현재 할당을 기다리는 work 시간 기준으로 크루 출근, 크루 퇴근   ok
   searching_working_num -> 일 횟수 searching 후 가장 적당한 크루 return
   check_can_enter -> 동시에 입장받을 수 있는지 확인하는 함수
   assign_working -> 실행과 동시에 refresh, 일횟수 searching, 동시에 입장받을 수 있는지 check(평균 입장수 넘어가면 pass), 적당한 크루에게 일 할당
