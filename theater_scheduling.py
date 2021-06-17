@@ -356,7 +356,7 @@ def make_scheduling_file():
         print("-> OK")
 
     # Output DataFrame
-    col_names = ['시간', '입/퇴장시간', '상영관', '회차', '등급', '영화명', '담당자', '지원']
+    col_names = ['시간', '입/퇴장시간', '상영관', '회차', '등급', '영화명']
 
     values = []
 
@@ -371,8 +371,6 @@ def make_scheduling_file():
             tmp_val.append(output[i].order)
             tmp_val.append(output[i].rating)
             tmp_val.append(output[i].name)
-            tmp_val.append("")
-            tmp_val.append("")
             values.append(tmp_val)
     except:
         print("Error")

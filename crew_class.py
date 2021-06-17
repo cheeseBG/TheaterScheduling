@@ -1,25 +1,35 @@
 class Crew:
     def __init__(self, name, start_time, end_time, idx):
-        self.name = name
-        self.start_time = start_time
-        self.end_time = end_time
-        self.idx = idx
-        self.working = False
-        self.enter_count = 0
-        self.exit_count = 0
+        self.name = name  # 크루 이름
+        self.start_time = start_time  # 출근시간
+        self.end_time = end_time  # 퇴근시간
+        self.idx = idx  # 고유 번호
+        self.working = 0  # 현재 수행하고있는 일 수
+        self.enter_count = 0  # 입장 처리 수
+        self.exit_count = 0  # 퇴장 처리 수
+        self.work_start_time = 0  # 입/퇴장 시작 시간
+        self.work_end_time = 0  # 입/퇴장 종료 시간
+        self.work_info = ''  # 일하는 관이 짝수? 홀수?
 
-    def do_enter(self):
+    def do_enter(self, work_obj):
         self.enter_count += 1
-        self.working = True
-        return self.enter_count
+        self.working += 1
+        self.work_start_time = work_obj.start_time
+        self.work_end_time = work_obj.end_time
+        self.work_info = work_obj.odd_or_even
 
-    def do_exit(self):
+    def do_exit(self, work_obj):
         self.exit_count += 1
-        self.working = True
-        return self.exit_count
+        self.working += 1
+        self.work_start_time = work_obj.start_time
+        self.work_end_time = work_obj.end_time
+        self.work_info = work_obj.odd_or_even
 
     def working_done(self):
-        self.working = False
+        self.working = 0
+        self.work_start_time = 0
+        self.work_end_time = 0
+        self.work_info = ''
 
     def total_review(self):
         return self.enter_count, self.exit_count
@@ -30,12 +40,13 @@ class Crew:
  퇴장시간은 영화끝나기 5분전 ~ 영화끝난후 관마다 정해진 청소시간까지
 '''
 class Assignment:
-    def __init__(self, movie_name, theater_num, work_class, time, err_time_list, cleaning_term_dict):
+    def __init__(self, movie_name, theater_num, work_class, time, err_time_list, cleaning_term_dict, odd_or_even):
         self.movie_name = movie_name  # 영화이름
         self.theater_num = theater_num  # 영화관 번호
         self.work_class = work_class  # 입장 or 퇴장
         self.start_time = 0
         self.end_time = 0
+        self.odd_or_even = odd_or_even
 
         if work_class == '입장':
             # 입장 시간
@@ -46,7 +57,7 @@ class Assignment:
                     self.start_time += 2400
 
             # 입장 마감 시간
-            self.end_time = time + 10
+            self.end_time = time + 10 + 3  # 3은 온도체크 시간
             if self.start_time % 100 >= 60:  # +10분해서 시간이 바뀌는경우
                 self.start_time = self.start_time + 40
                 if self.start_time >= 2500:  # 24시에서 +10 = 새벽 1시로 되는경우
