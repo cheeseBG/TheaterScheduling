@@ -73,8 +73,8 @@ class Assignment:
 
             # 반불시간 리스트에서 반불시간 가져오기
             err_time = 0
+            flag = 0
             for i in range(0, len(err_time_list)):
-                flag = 0
                 if self.movie_name == err_time_list[i][0]:
                     err_time = err_time_list[i][1]
                     flag = 1

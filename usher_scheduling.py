@@ -7,7 +7,7 @@ import pandas as pd
 def make_usher_scheduling_file():
     # Theater cleaning term dictionary
     cleaning_term_dict = {
-        '돌비시네마관': 10,
+        'Dolby Cinema': 10,
         '2관': 10,
         '3관': 10,
         '4관': 10,
@@ -24,7 +24,7 @@ def make_usher_scheduling_file():
 
     # Theater num is odd or even
     odd_or_even_dict = {
-            '돌비시네마관': 'odd',
+            'Dolby Cinema': 'odd',
             '2관': 'even',
             '3관': 'odd',
             '4관': 'even',
@@ -148,8 +148,12 @@ def make_usher_scheduling_file():
         print("*** Slicing '상영관' ***")
         for n in temp_list:
             tmp = n.split()
-            movie_theater_num_list.append(tmp[0])
-            movie_work_class_list.append(tmp[1])
+            if tmp[0] == 'Dolby':
+                movie_theater_num_list.append(tmp[0] + ' ' + tmp[1])
+                movie_work_class_list.append(tmp[2])
+            else:
+                movie_theater_num_list.append(tmp[0])
+                movie_work_class_list.append(tmp[1])
     except:
         print("Error")
         return False, 0
