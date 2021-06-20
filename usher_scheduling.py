@@ -53,7 +53,7 @@ def make_usher_scheduling_file():
             excelType = 2
         except FileNotFoundError:
             print("Read file error")
-            return False
+            return False, 0
         else:
             print("-> OK")
 
@@ -79,7 +79,7 @@ def make_usher_scheduling_file():
                 crew_list[i].end_time -= 2400
     except:
         print("Error")
-        return False
+        return False, 0
     else:
         print("-> OK")
 
@@ -92,7 +92,7 @@ def make_usher_scheduling_file():
             df_er = pd.read_excel('반불시간.xlsx', sheet_name='반불시간', header=1)
         except FileNotFoundError:
             print("Read file error")
-            return False
+            return False, 0
         else:
             print("-> OK")
 
@@ -106,7 +106,7 @@ def make_usher_scheduling_file():
             er_list[k][1] = int(er_list[k][1][3:5])
     except :
         print("Error")
-        return False
+        return False, 0
     else:
         print("-> OK")
 
@@ -120,7 +120,7 @@ def make_usher_scheduling_file():
             movie_schedule_df = pd.read_excel('최종스케줄.xlsx')
         except FileNotFoundError:
             print("Read file error")
-            return False
+            return False, 0
         else:
             print("-> OK")
 
@@ -135,7 +135,7 @@ def make_usher_scheduling_file():
             movie_time_list[k] = int(movie_time_list[k][0:2] + movie_time_list[k][3:5])
     except :
         print("Error")
-        return False
+        return False, 0
     else:
         print("-> OK")
 
@@ -152,7 +152,7 @@ def make_usher_scheduling_file():
             movie_work_class_list.append(tmp[1])
     except:
         print("Error")
-        return False
+        return False, 0
     else:
         print("-> OK")
 
@@ -171,7 +171,7 @@ def make_usher_scheduling_file():
                                               ))
     except:
         print("Error")
-        return False
+        return False, 0
     else:
         print("-> OK")
 
@@ -183,7 +183,7 @@ def make_usher_scheduling_file():
         assigned_list, crew_list = usher_scheduling_algorithm(crew_list, assignment_list)
     except:
         print("Error")
-        return False
+        return False, 0
     else:
         print("-> OK")
 
@@ -200,7 +200,7 @@ def make_usher_scheduling_file():
 
     except:
         print("Error")
-        return False
+        return False, 0
     else:
         print("-> OK")
 
@@ -213,7 +213,7 @@ def make_usher_scheduling_file():
             movie_schedule_df.to_excel('어셔반영스케줄.xlsx')
     except:
         print("Error")
-        return False
+        return False, 0
     else:
         print("-> OK")
 

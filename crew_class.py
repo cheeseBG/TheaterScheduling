@@ -58,7 +58,7 @@ class Assignment:
 
             # 입장 마감 시간
             self.end_time = time + 10 + 3  # 3은 온도체크 시간
-            if self.start_time % 100 >= 60:  # +10분해서 시간이 바뀌는경우
+            if self.start_time % 100 >= 60:  # +13분해서 시간이 바뀌는경우
                 self.start_time = self.start_time + 40
                 if self.start_time >= 2500:  # 24시에서 +10 = 새벽 1시로 되는경우
                     self.start_time -= 2400
