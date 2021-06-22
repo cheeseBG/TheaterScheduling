@@ -28,7 +28,16 @@ while run:
             os.system('cls')
 
     elif menu == '2':
-        success2, crew_list = make_usher_scheduling_file()
+        print("> 평균 입/퇴장에서 차감 근무 수 입력(0~3): ")
+        avg_threshold = int(input())
+
+        if 0 <= avg_threshold <= 3:
+            success2, crew_list = make_usher_scheduling_file(avg_threshold)
+        else:
+            print("> 0~3을 입력하세요!")
+            print("> 입력 오류 (Press Enter Key)")
+            input()
+            os.system('cls')
 
         if success2:
             print("\n\n ######## 크루 입/퇴장 수 ####### \n")

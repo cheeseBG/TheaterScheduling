@@ -96,8 +96,8 @@ def enable_enter_crew(work_obj, crew_list, threshold, max_enter_num, avg_enter_n
             crew_work_start_time += 2400
 
         # 크루 입장 시작시간과 현재 할당해야하는 업무 입장시간의 차이 계산
-        work_hour = work_start_time / 100
-        crew_hour = crew_work_start_time / 100
+        work_hour = int(work_start_time / 100)
+        crew_hour = int(crew_work_start_time / 100)
         error_hour_to_minute = (work_hour - crew_hour) * 60
         work_minute = (work_start_time % 100) + error_hour_to_minute
         crew_minute = crew_work_start_time % 100
@@ -206,7 +206,7 @@ def assign_work(work_obj, working_crew_list, threshold, max_enter_num, avg_num):
             return 0, 0
 
 
-def usher_scheduling_algorithm(crew_list, assignment_list):
+def usher_scheduling_algorithm(crew_list, assignment_list, avg_threshold):
     threshold = 20  # 중복입장 경계값
     max_enter_num = 3  # 최대 중복입장 가능 수
     working_crew_list = []  # 출근한 크루 리스트
@@ -215,6 +215,7 @@ def usher_scheduling_algorithm(crew_list, assignment_list):
     # 평균 입/퇴장 수 계산
     print('평균 입/퇴장 횟수 계산')
     avg_num = calculate_avg_work_num(assignment_list, crew_list)
+    avg_num -= avg_threshold  # 평균에서 일정 수 빼기 -> 뒤에 더 배분될 수 있도록
     print('-> OK')
 
     # 각각의 work에 대해 크루 할당
@@ -241,7 +242,7 @@ def usher_scheduling_algorithm(crew_list, assignment_list):
                         tmp_crew_list[j] = update_crew
 
         else:
-            work.name = '지원'
+            work.name = ' '  # 지원은 빈칸으로
             new_assignment_list.append(work)
     print('-> OK')
 

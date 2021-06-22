@@ -4,7 +4,7 @@ from usher_algorithm import usher_scheduling_algorithm
 import pandas as pd
 
 
-def make_usher_scheduling_file():
+def make_usher_scheduling_file(avg_threshold):
     # Theater cleaning term dictionary
     cleaning_term_dict = {
         'Dolby Cinema': 10,
@@ -181,10 +181,21 @@ def make_usher_scheduling_file():
 
     # ----------------------------------------------------------------------------------- ↑ 파일 읽어오기 및 object 생성
     # ----------------------------------------------------------------------------------- ↓ 스케줄링 알고리즘
+    # Dolby Cinema를 Dolby 로 변경
+    name_change_dict = {'Dolby Cinema': 'Dolby'}
+    theater_name_list = temp_list.copy()
+    i = 0
+    for n in temp_list:
+        tmp = n.split()
+        if tmp[0] == 'Dolby':
+            new_theater_name = tmp[0] + ' ' + tmp[2]
+            theater_name_list[i] = new_theater_name
+        i += 1
+    movie_schedule_df['상영관'] = theater_name_list
 
     try:
         print('*** Process usher scheduling algorithm ***')
-        assigned_list, crew_list = usher_scheduling_algorithm(crew_list, assignment_list)
+        assigned_list, crew_list = usher_scheduling_algorithm(crew_list, assignment_list, avg_threshold)
     except:
         print("Error")
         return False, 0
@@ -201,6 +212,7 @@ def make_usher_scheduling_file():
 
         movie_schedule_df = movie_schedule_df.drop([movie_schedule_df.columns[0]], axis='columns')
         movie_schedule_df['담당자'] = worker
+        print(movie_schedule_df)
 
     except:
         print("Error")
