@@ -8,16 +8,16 @@ def make_usher_scheduling_file(avg_threshold):
     # Theater cleaning term dictionary
     cleaning_term_dict = {
         'Dolby Cinema': 10,
-        '2관': 10,
-        '3관': 10,
-        '4관': 10,
-        '5관': 10,
-        '6관': 10,
-        '7관': 10,
-        '8관': 10,
-        '9관': 10,
-        '10관': 10,
-        '11관': 10,
+        '2관': 8,
+        '3관': 8,
+        '4관': 8,
+        '5관': 8,
+        '6관': 8,
+        '7관': 8,
+        '8관': 8,
+        '9관': 8,
+        '10관': 8,
+        '11관': 8,
         '스크린A': 5,
         '스크린B': 5
     }
@@ -66,9 +66,17 @@ def make_usher_scheduling_file(avg_threshold):
         crew_list = []
         for i in range(0, len(crew_name_list)):
             crew_list.append(Crew(crew_name_list[i],  # name
-                             crew_time_list[i],  # start time
-                             crew_time_list[i] + 630,  # Work during 06:30
+                             crew_time_list[i] + 5,  # start time (5분 미팅시간)
+                             crew_time_list[i] + 625,  # Work during 06:30 - 5(퇴근전 5분 여유)
                              i))  # index
+
+            # Calculate over the 60 minute
+            if crew_list[i].start_time % 100 >= 60:
+                crew_list[i].start_time += 40  # - 60minute, + 1hour
+
+            # Calculate over the 24 hour
+            if crew_list[i].start_time >= 2500:
+                crew_list[i].start_time -= 2400
 
             # Calculate over the 60 minute
             if crew_list[i].end_time % 100 >= 60:

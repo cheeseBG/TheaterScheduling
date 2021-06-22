@@ -9,11 +9,13 @@ class Crew:
         self.exit_count = 0  # 퇴장 처리 수
         self.work_start_time = 0  # 입/퇴장 시작 시간
         self.work_end_time = 0  # 입/퇴장 종료 시간
+        self.work_class = ''
         self.work_info = ''  # 일하는 관이 짝수? 홀수?
 
     def do_enter(self, work_obj):
         self.enter_count += 1
         self.working += 1
+        self.work_class = '입장'
         self.work_start_time = work_obj.start_time
         self.work_end_time = work_obj.end_time
         self.work_info = work_obj.odd_or_even
@@ -21,6 +23,7 @@ class Crew:
     def do_exit(self, work_obj):
         self.exit_count += 1
         self.working += 1
+        self.work_class = '퇴장'
         self.work_start_time = work_obj.start_time
         self.work_end_time = work_obj.end_time
         self.work_info = work_obj.odd_or_even
@@ -29,6 +32,7 @@ class Crew:
         self.working = 0
         self.work_start_time = 0
         self.work_end_time = 0
+        self.work_class = ''
         self.work_info = ''
 
     def total_review(self):

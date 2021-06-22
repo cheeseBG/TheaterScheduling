@@ -105,14 +105,14 @@ def enable_enter_crew(work_obj, crew_list, threshold, max_enter_num, avg_enter_n
         calc_minute = abs(crew_minute - work_minute)
 
         # 스크린A,B 인경우 입/퇴장 상관없이 중복으로 가능
-        if odd_or_even == 'etc' and work_obj.work_class == '입장':
+        if crew.end_time >= work_obj.end_time and odd_or_even == 'etc' and work_obj.work_class == '입장':
             if odd_or_even == crew_odd_or_even and crew.working < max_enter_num and calc_minute <= threshold and crew.enter_count < avg_enter_num:
                 enable_crew_list.append(crew)
-        elif odd_or_even == 'etc' and work_obj.work_class == '퇴장':
+        elif crew.end_time >= work_obj.end_time and odd_or_even == 'etc' and work_obj.work_class == '퇴장':
             if odd_or_even == crew_odd_or_even and crew.working < max_enter_num and calc_minute <= threshold and crew.exit_count < avg_enter_num:
                 enable_crew_list.append(crew)
         # 스크린 A,B 아닌 경우
-        else:
+        elif crew.end_time >= work_obj.end_time and work_obj.work_class == '입장' and crew.work_class != '퇴장':
             if odd_or_even == crew_odd_or_even and crew.working < max_enter_num and calc_minute <= threshold and crew.enter_count < avg_enter_num:
                 enable_crew_list.append(crew)
 
@@ -123,7 +123,7 @@ def enable_enter_crew(work_obj, crew_list, threshold, max_enter_num, avg_enter_n
         return enable_crew_list[0]
 
 
-def searching_working_num(working_crew_list, work_class, avg_num):
+def searching_working_num(working_crew_list, work_class, work_end_time, avg_num):
     # 일을 하지않고 있는 크루 리스트 뽑기
     none_working_list = []
     for crew in working_crew_list:
@@ -135,11 +135,11 @@ def searching_working_num(working_crew_list, work_class, avg_num):
         return 0
 
     enable_crew_list = []
-    # 일을 하지않고 있는 크루 중 입/퇴장에 따라 평균횟수 안넘은 크루 리스트 뽑기
+    # 일을 하지않고 있는 크루 중 입/퇴장에 따라 평균횟수 안넘은, 일 종료시간 > 퇴근시간 크루 리스트 뽑기
     for crew in none_working_list:
-        if work_class == '입장' and crew.enter_count < avg_num:
+        if crew.end_time >= work_end_time and work_class == '입장' and crew.enter_count < avg_num:
             enable_crew_list.append(crew)
-        elif work_class == '퇴장' and crew.exit_count < avg_num:
+        elif crew.end_time >= work_end_time and work_class == '퇴장' and crew.exit_count < avg_num:
             enable_crew_list.append(crew)
 
     # 모두 평균 횟수 넘을경우 return 0
@@ -152,6 +152,7 @@ def searching_working_num(working_crew_list, work_class, avg_num):
 
 def assign_work(work_obj, working_crew_list, threshold, max_enter_num, avg_num):
     work_class = work_obj.work_class  # 입장 or 퇴장
+    work_end_time = work_obj.end_time
 
     # 스크린 A,B 일인 경우 입퇴장을 하고있는 크루가 있으면 동시작업 가능여부 파악 후 할당
     if work_obj.odd_or_even == 'etc':
@@ -183,7 +184,7 @@ def assign_work(work_obj, working_crew_list, threshold, max_enter_num, avg_num):
                 return work_obj, crew
 
         # 입장 받고있는 크루가 없는경우
-        crew = searching_working_num(working_crew_list, work_class, avg_num)
+        crew = searching_working_num(working_crew_list, work_class, work_end_time, avg_num)
 
         if crew != 0:
             work_obj.assign_work(crew)
@@ -194,7 +195,7 @@ def assign_work(work_obj, working_crew_list, threshold, max_enter_num, avg_num):
             # 현재 일 할수 있는 크루가 없는경우
             return 0, 0
     elif work_class == '퇴장':
-        crew = searching_working_num(working_crew_list, work_class, avg_num)
+        crew = searching_working_num(working_crew_list, work_class, work_end_time, avg_num)
 
         if crew != 0:
             work_obj.assign_work(crew)
