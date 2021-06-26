@@ -43,7 +43,8 @@ while run:
             print("\n\n ######## 크루 입/퇴장 수 ####### \n")
             for crew in crew_list:
                 enter, exit_num = crew.total_review()
-                print(crew.name + ' 입장: ' + str(enter) + ' 퇴장: ' + str(exit_num))
+                rest_start = crew.rest_time
+                print(crew.name + ' 입장: ' + str(enter) + ' 퇴장: ' + str(exit_num), ' 휴게시작: ' + str(rest_start))
             print('###############################\n')
             print("> 어셔반영스케줄 파일이 생성되었습니다(Press Enter Key)")
             input()

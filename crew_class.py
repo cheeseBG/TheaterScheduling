@@ -1,8 +1,20 @@
 class Crew:
-    def __init__(self, name, start_time, end_time, idx):
+    def __init__(self, name, start_time, end_time, rest_time, idx):
         self.name = name  # 크루 이름
-        self.start_time = start_time  # 출근시간
-        self.end_time = end_time  # 퇴근시간
+        self.start_time = int(start_time)  # 출근시간
+        self.end_time = int(end_time)  # 퇴근시간
+        self.rest_time = int(rest_time)  # 휴게시간
+
+        tmp = rest_time + 30 + 2
+
+        if tmp % 100 >= 60:  # +32분해서 시간이 바뀌는경우
+            tmp = tmp + 40
+            if tmp >= 2500:  # 24시에서 +32 = 새벽 1시로 되는경우
+                tmp -= 2400
+
+        self.rest_end_time = tmp  # 휴식시간 30분 + 이동시간 2분
+        self.rest_state = False
+
         self.idx = idx  # 고유 번호
         self.working = 0  # 현재 수행하고있는 일 수
         self.enter_count = 0  # 입장 처리 수

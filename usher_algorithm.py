@@ -63,6 +63,23 @@ def refresh_working_crew_list(work_obj, working_crew_list, crew_list):
         if crew.end_time <= current_time:
             new_working_crew_list.remove(crew)
 
+    # 현재 시간을 기준으로 출근한 크루들의 휴게상태 변경
+    for i in range(0, len(new_working_crew_list)):
+        rest_start_time = new_working_crew_list[i].rest_time
+        rest_end_time = new_working_crew_list[i].rest_end_time
+
+        # 새벽 1시에서 5시 사이인경우 2500~2900으로 시간을 바꿔서 계산 편리하도록
+        if 100 <= rest_start_time < 500:
+            rest_start_time += 2400
+
+        if 100 <= rest_end_time < 500:
+            rest_end_time += 2400
+
+        if rest_start_time <= current_time <= rest_end_time:
+            new_working_crew_list[i].rest_state = True
+        else:
+            new_working_crew_list[i].rest_state = False
+
     return new_working_crew_list, new_crew_list
 
 
@@ -105,16 +122,25 @@ def enable_enter_crew(work_obj, crew_list, threshold, max_enter_num, avg_enter_n
         calc_minute = abs(crew_minute - work_minute)
 
         # 스크린A,B 인경우 입/퇴장 상관없이 중복으로 가능
-        if crew.end_time >= work_obj.end_time and odd_or_even == 'etc' and work_obj.work_class == '입장':
+        if crew.end_time >= work_obj.end_time and odd_or_even == 'etc' and work_obj.work_class == '입장' and crew.rest_state is False:
             if odd_or_even == crew_odd_or_even and crew.working < max_enter_num and calc_minute <= threshold and crew.enter_count < avg_enter_num:
-                enable_crew_list.append(crew)
-        elif crew.end_time >= work_obj.end_time and odd_or_even == 'etc' and work_obj.work_class == '퇴장':
+                if work_start_time <= crew.rest_time and crew.rest_time >= work_obj.end_time:
+                    enable_crew_list.append(crew)
+                elif work_start_time >= crew.rest_time and work_start_time >= crew.rest_end_time:
+                    enable_crew_list.append(crew)
+        elif crew.end_time >= work_obj.end_time and odd_or_even == 'etc' and work_obj.work_class == '퇴장' and crew.rest_state is False:
             if odd_or_even == crew_odd_or_even and crew.working < max_enter_num and calc_minute <= threshold and crew.exit_count < avg_enter_num:
-                enable_crew_list.append(crew)
+                if work_start_time <= crew.rest_time and crew.rest_time >= work_obj.end_time:
+                    enable_crew_list.append(crew)
+                elif work_start_time >= crew.rest_time and work_start_time >= crew.rest_end_time:
+                    enable_crew_list.append(crew)
         # 스크린 A,B 아닌 경우
-        elif crew.end_time >= work_obj.end_time and work_obj.work_class == '입장' and crew.work_class != '퇴장':
+        elif crew.end_time >= work_obj.end_time and work_obj.work_class == '입장' and crew.work_class != '퇴장' and crew.rest_state is False:
             if odd_or_even == crew_odd_or_even and crew.working < max_enter_num and calc_minute <= threshold and crew.enter_count < avg_enter_num:
-                enable_crew_list.append(crew)
+                if work_start_time <= crew.rest_time and crew.rest_time >= work_obj.end_time:
+                    enable_crew_list.append(crew)
+                elif work_start_time >= crew.rest_time and work_start_time >= crew.rest_end_time:
+                    enable_crew_list.append(crew)
 
     if len(enable_crew_list) == 0:
         return 0
@@ -123,7 +149,7 @@ def enable_enter_crew(work_obj, crew_list, threshold, max_enter_num, avg_enter_n
         return enable_crew_list[0]
 
 
-def searching_working_num(working_crew_list, work_class, work_end_time, avg_num):
+def searching_working_num(working_crew_list, work_class, work_start_time, work_end_time, avg_num):
     # 일을 하지않고 있는 크루 리스트 뽑기
     none_working_list = []
     for crew in working_crew_list:
@@ -137,10 +163,16 @@ def searching_working_num(working_crew_list, work_class, work_end_time, avg_num)
     enable_crew_list = []
     # 일을 하지않고 있는 크루 중 입/퇴장에 따라 평균횟수 안넘은, 일 종료시간 > 퇴근시간 크루 리스트 뽑기
     for crew in none_working_list:
-        if crew.end_time >= work_end_time and work_class == '입장' and crew.enter_count < avg_num:
-            enable_crew_list.append(crew)
-        elif crew.end_time >= work_end_time and work_class == '퇴장' and crew.exit_count < avg_num:
-            enable_crew_list.append(crew)
+        if crew.end_time >= work_end_time and work_class == '입장' and crew.enter_count < avg_num and crew.rest_state is False:
+            if work_start_time <= crew.rest_time and crew.rest_time >= work_end_time:
+                enable_crew_list.append(crew)
+            elif work_start_time >= crew.rest_time and work_start_time >= crew.rest_end_time:
+                enable_crew_list.append(crew)
+        elif crew.end_time >= work_end_time and work_class == '퇴장' and crew.exit_count < avg_num and crew.rest_state is False:
+            if work_start_time <= crew.rest_time and crew.rest_time >= work_end_time:
+                enable_crew_list.append(crew)
+            elif work_start_time >= crew.rest_time and work_start_time >= crew.rest_end_time:
+                enable_crew_list.append(crew)
 
     # 모두 평균 횟수 넘을경우 return 0
     if len(enable_crew_list) == 0:
@@ -152,6 +184,7 @@ def searching_working_num(working_crew_list, work_class, work_end_time, avg_num)
 
 def assign_work(work_obj, working_crew_list, threshold, max_enter_num, avg_num):
     work_class = work_obj.work_class  # 입장 or 퇴장
+    work_start_time = work_obj.start_time
     work_end_time = work_obj.end_time
 
     # 스크린 A,B 일인 경우 입퇴장을 하고있는 크루가 있으면 동시작업 가능여부 파악 후 할당
@@ -184,7 +217,7 @@ def assign_work(work_obj, working_crew_list, threshold, max_enter_num, avg_num):
                 return work_obj, crew
 
         # 입장 받고있는 크루가 없는경우
-        crew = searching_working_num(working_crew_list, work_class, work_end_time, avg_num)
+        crew = searching_working_num(working_crew_list, work_class, work_start_time, work_end_time, avg_num)
 
         if crew != 0:
             work_obj.assign_work(crew)
@@ -195,7 +228,7 @@ def assign_work(work_obj, working_crew_list, threshold, max_enter_num, avg_num):
             # 현재 일 할수 있는 크루가 없는경우
             return 0, 0
     elif work_class == '퇴장':
-        crew = searching_working_num(working_crew_list, work_class, work_end_time, avg_num)
+        crew = searching_working_num(working_crew_list, work_class, work_start_time, work_end_time, avg_num)
 
         if crew != 0:
             work_obj.assign_work(crew)

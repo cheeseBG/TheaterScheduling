@@ -1,4 +1,6 @@
 # -*- coding: UTF-8 -*-
+import pandas
+
 from crew_class import Crew, Assignment
 from usher_algorithm import usher_scheduling_algorithm
 import pandas as pd
@@ -59,15 +61,21 @@ def make_usher_scheduling_file(avg_threshold):
 
     crew_name_list = usher_time_df['크루'].values.tolist()
     crew_time_list = usher_time_df['출근시간'].values.tolist()  # int type
+    crew_rest_time_list = usher_time_df['휴게시간'].values.tolist()
 
     # Create Crew object
     try:
         print("*** Create Crew object ***")
         crew_list = []
         for i in range(0, len(crew_name_list)):
+            if pandas.isna(crew_rest_time_list[i]):
+                crew_rest_time_list[i] = crew_time_list[i] + 300  # 칸 비어있을경우 출근 후 3시간뒤 휴게
+                if crew_rest_time_list[i] >= 2500:  # +3시간 해서 새벽 1시 이후로 되는경우
+                    crew_rest_time_list[i] -= 2400
             crew_list.append(Crew(crew_name_list[i],  # name
                              crew_time_list[i] + 5,  # start time (5분 미팅시간)
                              crew_time_list[i] + 625,  # Work during 06:30 - 5(퇴근전 5분 여유)
+                             crew_rest_time_list[i],  # 휴게 시작시간
                              i))  # index
 
             # Calculate over the 60 minute
@@ -208,7 +216,7 @@ def make_usher_scheduling_file(avg_threshold):
         print("Error")
         return False, 0
     else:
-        print("-> OK")
+        print("----> OK")
 
 
     # 입/퇴장 담당자 리스트 만들기
@@ -220,8 +228,6 @@ def make_usher_scheduling_file(avg_threshold):
 
         movie_schedule_df = movie_schedule_df.drop([movie_schedule_df.columns[0]], axis='columns')
         movie_schedule_df['담당자'] = worker
-        print(movie_schedule_df)
-
     except:
         print("Error")
         return False, 0
