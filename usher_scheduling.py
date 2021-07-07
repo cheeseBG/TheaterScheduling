@@ -90,9 +90,9 @@ def make_usher_scheduling_file(avg_threshold):
             if crew_list[i].end_time % 100 >= 60:
                 crew_list[i].end_time += 40  # - 60minute, + 1hour
 
-            # Calculate over the 24 hour
-            if crew_list[i].end_time >= 2500:
-                crew_list[i].end_time -= 2400
+            # # Calculate over the 24 hour
+            # if crew_list[i].end_time >= 2500:
+            #     crew_list[i].end_time -= 2400
     except:
         print("Error")
         return False, 0
